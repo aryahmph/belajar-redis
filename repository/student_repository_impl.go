@@ -31,11 +31,14 @@ func (s *StudentRepositoryImpl) Delete(ctx context.Context, tx *gorm.DB, student
 	helper.PanicIfError(err)
 }
 
-func (s *StudentRepositoryImpl) FindByNim(ctx context.Context, tx *gorm.DB, nim string) domain.Student {
+func (s *StudentRepositoryImpl) FindById(ctx context.Context, tx *gorm.DB, studentId uint) (domain.Student, error) {
 	var student domain.Student
-	err := tx.WithContext(ctx).Where("nim = ?", nim).First(&student).Error
-	helper.PanicIfError(err)
-	return student
+	err := tx.WithContext(ctx).Where("id = ?", studentId).First(&student).Error
+	if err != nil {
+		return student, err
+	} else {
+		return student, nil
+	}
 }
 
 func (s *StudentRepositoryImpl) FindAll(ctx context.Context, tx *gorm.DB) []domain.Student {

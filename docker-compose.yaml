@@ -1,6 +1,16 @@
-version: '3.5'
+version: "3.8"
 
 services:
+  mysql:
+    container_name: mysql
+    image: mysql:8.0.26
+    environment:
+      - MYSQL_ROOT_PASSWORD=aryahmph
+      - MYSQL_DATABASE=belajar_redis
+    ports:
+      - "3306:3306"
+    networks:
+      - belajar_redis
   redis:
     container_name: redis
     image: redis:6.2.5
@@ -9,3 +19,23 @@ services:
       - "6379:6379"
     volumes:
       - ./redis-config/redis.conf:/usr/local/etc/redis/redis.conf
+    networks:
+      - belajar_redis
+
+  belajar-redis:
+    container_name: belajar-redis
+    image: belajar-redis:latest
+    ports:
+      - "3000:3000"
+    depends_on:
+      - mysql
+      - redis
+    environment:
+      - MYSQL_ROOT_PASSWORD=aryahmph
+      - MYSQL_DATABASE=bareksa_aryayunanta
+    networks:
+      - belajar_redis
+
+networks:
+  belajar_redis:
+    name: belajar_redis

@@ -31,7 +31,6 @@ func (s *StudentServiceImpl) Create(ctx context.Context, request web.StudentCrea
 
 	student := domain.Student{
 		Name: request.Name,
-		Nim:  request.Nim,
 	}
 	student = s.StudentRepository.Save(ctx, tx, student)
 	return helper.ToStudentResponse(student), nil
@@ -46,19 +45,19 @@ func (s *StudentServiceImpl) Update(ctx context.Context, request web.StudentUpda
 	tx := s.DB.Begin()
 	defer helper.CommitOrRollback(tx)
 
-	var studentResponses web.StudentResponse
-	student, err := s.StudentRepository.FindByNim(ctx, tx, request.Nim)
+	var studentResponse web.StudentResponse
+	student, err := s.StudentRepository.FindById(ctx, tx, request.Id)
 	if err != nil {
-		return studentResponses, err
+		return studentResponse, err
 	}
 	return helper.ToStudentResponse(student), nil
 }
 
-func (s *StudentServiceImpl) Delete(ctx context.Context, studentNim string) error {
+func (s *StudentServiceImpl) Delete(ctx context.Context, studentId uint) error {
 	tx := s.DB.Begin()
 	defer helper.CommitOrRollback(tx)
 
-	student, err := s.StudentRepository.FindByNim(ctx, tx, studentNim)
+	student, err := s.StudentRepository.FindById(ctx, tx, studentId)
 	if err != nil {
 		return err
 	}
@@ -67,11 +66,11 @@ func (s *StudentServiceImpl) Delete(ctx context.Context, studentNim string) erro
 	return nil
 }
 
-func (s *StudentServiceImpl) FindByNim(ctx context.Context, studentNim string) (web.StudentResponse, error) {
+func (s *StudentServiceImpl) FindById(ctx context.Context, studentId uint) (web.StudentResponse, error) {
 	tx := s.DB.Begin()
 	defer helper.CommitOrRollback(tx)
 
-	student, err := s.StudentRepository.FindByNim(ctx, tx, studentNim)
+	student, err := s.StudentRepository.FindById(ctx, tx, studentId)
 	if err != nil {
 		return web.StudentResponse{}, err
 	}

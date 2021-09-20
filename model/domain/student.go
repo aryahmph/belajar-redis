@@ -7,5 +7,4 @@ import (
 type Student struct {
 	gorm.Model
 	Name string `gorm:"notNull"`
-	Nim  string `gorm:"unique"`
 }
