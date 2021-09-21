@@ -16,12 +16,14 @@ import (
 
 func main() {
 	db := app.NewDB()
+	redis := app.NewRedis()
 	validate := validator.New()
 	err := db.AutoMigrate(&domain.Student{})
 	helper.PanicIfError(err)
 
 	studentRepository := repository.NewStudentRepositoryImpl()
-	studentService := service.NewStudentServiceImpl(studentRepository, db, validate)
+	studentCache := repository.NewStudentCacheImpl()
+	studentService := service.NewStudentServiceImpl(studentRepository, studentCache, db, redis, validate)
 	studentController := controller.NewStudentControllerImpl(studentService)
 
 	router := chi.NewRouter()
@@ -36,7 +38,7 @@ func main() {
 		router.Get("/", studentController.FindAll)
 		router.Get("/{studentId}", studentController.FindById)
 		router.Put("/{studentId}", studentController.Update)
-		router.Delete("/{studentId}", studentController.Update)
+		router.Delete("/{studentId}", studentController.Delete)
 	})
 
 	server := http.Server{

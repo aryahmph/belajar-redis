@@ -9,7 +9,6 @@ func ToStudentResponse(student domain.Student) web.StudentResponse {
 	return web.StudentResponse{
 		Id:   student.ID,
 		Name: student.Name,
-		Nim:  student.Nim,
 	}
 }
 
